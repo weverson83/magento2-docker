@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+  lb:
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./conf/lb/ssl:/etc/nginx/ssl:cached
+      - ./conf/lb/conf.d:/etc/nginx/conf.d:cached
+
+  varnish:
+    image: fballiano/varnish
+    environment:
+      VARNISHD_PARAMS: -p feature=+esi_ignore_https -p default_ttl=3600 -p default_grace=3600 -T 0.0.0.0:6082 -S /etc/varnish/secret
+    ports:
+    - "6081:80"
+    - "6082:6082"
+    volumes:
+    - ./conf/varnish/default.vcl:/etc/varnish/default.vcl:cached
+    - ./conf/varnish/includes:/etc/varnish/includes:cached
+
+  nginx:
+    image: monsoonconsulting/nginx:beta
+    volumes:
+      - m2ce-main-sync:/var/www/html:nocopy
+
+  php:
+    image: monsoonconsulting/php:magento2-php7.1
+    volumes:
+      - ~/.composer/cache:/root/.composer/cache:cached
+      - m2ce-main-sync:/var/www/html:nocopy
+      - m2ce-app-sync:/var/www/html/app:nocopy
+
+  database:
+      image: mariadb:10.0
+      volumes:
+        - ~/.docker/data/m2ce:/var/lib/mysql:delegated
+      ports:
+        - 3306:3306
+      environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_DATABASE=magento
+
+  redis:
+    image: redis:3.0
+
+  rabbitmq:
+    image: rabbitmq:3.5
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
+    volumes:
+    - ~/.docker/m2ce/es/data/:/usr/share/elasticsearch/data
+    ports:
+    - "9200:9200"
+    - "9300:9300"
+
+  mailcatcher:
+    image: schickling/mailcatcher
+
+volumes:
+  m2ce-app-sync:
+    external: true
+  m2ce-main-sync:
+    external: true

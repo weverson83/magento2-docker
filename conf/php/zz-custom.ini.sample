@@ -1,0 +1,23 @@
+max_execution_time = 600
+memory_limit = 2048M
+display_errors = On
+post_max_size = 32M
+upload_max_filesize = 32M
+
+; Use MSMTP instead of sendmail
+sendmail_path = "/usr/bin/msmtp -C /root/.msmtprc -t"
+
+; XDebug configuration
+; zend_extension = /usr/lib64/php/modules/xdebug.so
+xdebug.remote_port = 9000
+xdebug.default_enable = 1
+xdebug.profiler_enable = 0
+xdebug.remote_handler = "dbgp"
+xdebug.remote_enable = 1
+xdebug.remote_autostart = 0
+xdebug.auto_trace = 0
+xdebug.remote_host = 192.168.99.1
+xdebug.remote_connect_back = 0
+xdebug.idekey = "PHPSTORM"
+xdebug.profiler_output_dir = "/tmp"
+xdebug.remote_log = "/var/log/remote_xdebug.log"

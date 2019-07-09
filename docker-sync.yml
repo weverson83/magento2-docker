@@ -1,0 +1,26 @@
+version: "2"
+
+options:
+  verbose: true
+syncs:
+ #IMPORTANT: ensure this name is unique and does not match your other application container name
+   m2ce-app-sync: # tip: add -sync and you keep consistent names as a convention
+       src: '../app'
+       sync_excludes: ['.idea', '.git']
+       # the files should be own by root in the target cointainer
+       sync_userid: 0
+       host_disk_mount_mode: 'cached'
+       monit_enabled: true
+       monit_interval: 5
+       monit_high_cpu_cycles: 2
+
+   m2ce-main-sync: # tip: add -sync and you keep consistent names as a convention
+     src: '../'
+     sync_excludes: ['.idea', '.git', 'node_modules', 'app', 'var/cache', 'pub/static', 'var/view_preprocessed', 'var/tmp', 'var/page_cache', 'supervisor*']
+     # the files should be own by root in the target cointainer
+     sync_userid: 0
+     host_disk_mount_mode: 'cached'
+     monit_enabled: true
+     monit_interval: 5
+     monit_high_cpu_cycles: 2
+
